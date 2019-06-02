@@ -78,7 +78,7 @@ def generateCandidates(ds, minSup):
         #print("    tuple2 ", tuple2)
         V.append(tuple2)
 
-    #print("V", V)
+    print("V", V)
     #frequent itemset
     for m in range(0, temp0):#tebelka dla kazdej litery   temp0
         count = 0
@@ -99,7 +99,7 @@ def generateCandidates(ds, minSup):
         if count > minSup:
             F.append(tuple)
 
-    #print("F", F)
+    print("F", F)
 
     return V, F
 
