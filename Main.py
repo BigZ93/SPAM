@@ -6,13 +6,16 @@ import random
 def spam(data, minSup):
     patterns = []
     V, F = generateCandidates(data, minSup)
-    #for i in F:
-    #   search(...)
+    for i in range(0, len(F)):
+        #print("aaa", F[i])
+        item = F[i]
+        #search(item[0], F, )
+
     return patterns
 
 
 def search(pattern, S, I, minSup):
-    p = ][]
+    p = []
     tempS = []
     tempI = []
     #for j in S:
@@ -140,6 +143,7 @@ if __name__ == "__main__":
     #d = input("give maximum number of letter from the alphabet to choose from: ")
     #e = input("give minimum support: ")
     dataset = generateData(4, 3, 2, 5)
-    vds, f = generateCandidates(dataset, minSup=1)
-    print(dataset)
+    print("generated data", dataset)
+    minSup = 1
+    p = spam(dataset, minSup)
 
