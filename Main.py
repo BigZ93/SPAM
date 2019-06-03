@@ -2,14 +2,16 @@ import numpy as np
 import matplotlib as mpl
 import pandas as pd
 import random
+import itertools
 
-def spam(data, minSup):
+def spam(data, minSup, maxItemLength):
     patterns = []
-    V, F = generateCandidates(data, minSup)
+    V, F = generateCandidates(data, minSup, maxItemLength)
     for i in range(0, len(F)):
-        #print("aaa", F[i])
-        item = F[i]
-        #search(item[0], F, )
+        print("item", F[i])
+        s = F[i]
+        i.append(s[0])
+        search(s[0], F, minSup)
 
     return patterns
 
@@ -31,7 +33,10 @@ def search(pattern, S, I, minSup):
     return p
 
 
-def generateCandidates(ds, minSup):
+def generateCandidates(ds, minSup, maxItemLength):
+    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]), (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
+          (2, [['a'], ['b'], ['f'], ['e']]), (3, [['b'], ['f', 'g']])]
+
     V = []
     F = []
     #list of all letters
@@ -82,7 +87,8 @@ def generateCandidates(ds, minSup):
         V.append(tuple2)
 
     print("V", V)
-    #frequent itemset
+    freqs = []
+    #set of frequent items
     for m in range(0, temp0):#tebelka dla kazdej litery   temp0
         count = 0
         for i in range(0, temp):#dla kazdego sid   temp
@@ -97,14 +103,24 @@ def generateCandidates(ds, minSup):
                     if letter is letters[m]:
                         count = count + 1
 
-        tuple = (letters[m], count)
-        #print("tuple", tuple)
-        if count > minSup:
-            F.append(tuple)
+        if count >= minSup:
+            F.append(letters[m])
 
+    print("F", F)
+    F.append((['a', 'b'], 2))
+    F.append((['f', 'g'], 2))
     print("F", F)
 
     return V, F
+
+
+def findSubset(subset, set):
+    if len(subset) > len(set):
+        return False
+    for i in range(0, len(set) - len(subset) + 1):
+        if set[i:i + len(subset)] == subset:
+            return True
+    return False
 
 
 def generateData(maxItems, maxSeqLength, maxItemLength, lastLetter):
@@ -144,6 +160,6 @@ if __name__ == "__main__":
     #e = input("give minimum support: ")
     dataset = generateData(4, 3, 2, 5)
     print("generated data", dataset)
-    minSup = 1
-    p = spam(dataset, minSup)
+    minSup = 2
+    p = spam(dataset, minSup, 2)
 
