@@ -10,27 +10,81 @@ def spam(data, minSup, maxItemLength):
     for i in range(0, len(F)):
         print("item", F[i])
         s = F[i]
+        pat = []
+        pat.append(s[0])
+
+        i = []
         i.append(s[0])
-        search(s[0], F, minSup)
+
+        search(pat, F, i, minSup)
 
     return patterns
 
 
 def search(pattern, S, I, minSup):
-    p = []
     tempS = []
     tempI = []
-    #for j in S:
-    #   if:
-    #
-    #for j in tempS:
-    #    search()
-    #for j in I:
-    #    if:
-    #
-    #for j in tempI:
-    #   search()
+    for i in range(0, S):
+        x = S[i]
+        p = pattern
+        p.append(x)
+        # czy p jest frequent
+        if checkIfFrequent():
+            tempS.append(x)
+
+    for i in range(0, len(tempS)):
+        search(p, tempS, elementsInTempSGreaterThani, minSup)
+
+    for i in range(0, len(I)):
+        x2 = I[i]
+        p2 = pattern
+        l = len(p2)
+        p2[l-1].append(x2)
+        # czy p2 jest frequent
+        if checkIfFrequent():
+            tempI.append(x2)
+
+    for i in range(0, tempI):
+       search(p2, tempS, elementsInTempIGreaterThani, minSup)
+
     return p
+
+
+def checkIfFrequent(ds, pattern, minSup):
+    count = 0
+    for i in range(0, len(ds)):#len(ds)
+        transaction = ds[i]
+        sequence = transaction[1]
+        if len(pattern) > len(ds):
+            continue
+
+        m = 0
+        for j in range(0, len(sequence)):#len(sequence)
+            itemset = sequence[j]
+            itemsetP = pattern[m]
+            if len(itemsetP) > len(itemset):
+                continue
+
+            l = 0
+            for k in range(0, len(itemset)):#len(itemset)
+                item = itemset[k]
+                itemP =itemsetP[l]
+                if item is itemP:
+                    l = l + 1
+                    if l == len(itemsetP):
+                        m = m + 1
+                        break
+
+            if m == len(pattern):
+                count = count + 1
+                break
+
+    print("counter ", count)
+    if count >= minSup:
+        print("pattern", pattern)
+        return True
+
+    return False
 
 
 def generateCandidates(ds, minSup, maxItemLength):
@@ -114,15 +168,6 @@ def generateCandidates(ds, minSup, maxItemLength):
     return V, F
 
 
-def findSubset(subset, set):
-    if len(subset) > len(set):
-        return False
-    for i in range(0, len(set) - len(subset) + 1):
-        if set[i:i + len(subset)] == subset:
-            return True
-    return False
-
-
 def generateData(maxItems, maxSeqLength, maxItemLength, lastLetter):
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                 "u", "v", "w", "x", "y", "z"]
@@ -158,8 +203,11 @@ if __name__ == "__main__":
     #c = input("give maximum length of a itemset: ")
     #d = input("give maximum number of letter from the alphabet to choose from: ")
     #e = input("give minimum support: ")
-    dataset = generateData(4, 3, 2, 5)
-    print("generated data", dataset)
+    #dataset = generateData(4, 3, 2, 5)
+    #print("generated data", dataset)
     minSup = 2
-    p = spam(dataset, minSup, 2)
-
+    #p = spam(dataset, minSup, 2)
+    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]), (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
+          (2, [['a'], ['b'], ['f'], ['e']]), (3, [['b'], ['f', 'g']])]
+    p = [['a'], ['b']]
+    checkIfFrequent(ds, p, minSup)
