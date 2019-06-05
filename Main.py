@@ -6,62 +6,100 @@ import itertools
 
 def spam(data, minSup, frequentItems):
     F = frequentItems
-    #V, F = generateCandidates(data, minSup, maxItemLength)
     for i in range(0, len(F)):#len(F)
-        #print("item", F[i])
         s = F[i]
         pat = []
         pat.append(s)
 
-        i = []
-        i.append(s[0])
+        e = []
+        for j in range(i+1, len(F)):
+            e.append(F[j])
 
         checkIfFrequent(data, pat, minSup)
-        search(pat, F, i, minSup, data)
+        search(pat, F, e, minSup, data)
 
 
-def search(pattern, S, I, minSup, data):
+def search(pattern, S, E, minSup, data):
     tempS = []
-    tempI = []
+    tempE = []
     p = []
     elementsInTempSGreaterThani = []
-    elementsInTempIGreaterThani = []
+    elementsInTempEGreaterThani = []
 
     for i in range(0, len(S)):#len(S)
         x = S[i]
-        #print("aaa", x)
         p = []
         for j in range(0, len(pattern)):
             p.append(pattern[j])
 
         p.append(x)
-        #print("bbb", p)
         if checkIfFrequent(data, p, minSup) is True:
             tempS.append(x)
 
     p2 = []
-    #print("ccc", tempS)
     for i in range(0, len(tempS)):#len(tempS)
         x2 = tempS[i]
-        #print("aaa", x2)
         p2 = []
         for j in range(0, len(pattern)):
             p2.append(pattern[j])
 
         p2.append(x2)
-        # print("bbb", p)
+        elementsInTempSGreaterThani = []
+        for j in range(i+1, len(tempS)):
+            elementsInTempSGreaterThani.append(tempS[j])
+
         search(p2, tempS, elementsInTempSGreaterThani, minSup, data)
 
-    #for i in range(0, len(I)):
-    #    x2 = I[i]
-    #    p2 = pattern
-    #    l = len(p2)
-    #    p2[l-1].append(x2)
-    #    if checkIfFrequent(data, p, minSup):
-    #        tempI.append(x2)
+    p3 = []
+    for i in range(0, len(E)):#len(E)
+        x3 = E[i]
+        p3 = []
+        for j in range(0, len(pattern)-1):
+            p3.append(pattern[j])
 
-    #for i in range(0, tempI):
-    #   search(p2, tempS, elementsInTempIGreaterThani, minSup, data)
+        last = []
+        temp = pattern[len(pattern)-1]
+        for j in range(0, len(temp)):
+            last.append(temp[j])
+        flag = True
+        for k in range(0, len(last)):
+            if x3[0] == last[k]:
+                flag = False
+
+        if flag:
+            for j in range(0, len(x3)):
+                last.append(x3[j])
+
+        p3.append(last)
+        if checkIfFrequent(data, p3, minSup):
+            tempE.append(x3)
+
+    p4 = []
+    for i in range(0, len(tempE)):#len(tempE)
+        x4 = E[i]
+        p4 = []
+        for j in range(0, len(pattern) - 1):
+            p4.append(pattern[j])
+
+        last2 = []
+        temp2 = pattern[len(pattern) - 1]
+        for j in range(0, len(temp2)):
+            last2.append(temp2[j])
+        flag = True
+        for k in range(0, len(last2)):
+            if x4[0] is last2[k]:
+                flag = True
+
+        if flag:
+            for j in range(0, len(x4)):
+                last2.append(x4[j])
+
+        p4.append(last2)
+        elementsInTempEGreaterThani = []
+        for j in range(i+1, len(tempE)):
+            elementsInTempEGreaterThani.append(tempE[j])
+
+        search(p4, tempS, elementsInTempEGreaterThani, minSup, data)
 
 
 def checkIfFrequent(ds, pattern, minSup):
@@ -82,7 +120,7 @@ def checkIfFrequent(ds, pattern, minSup):
             l = 0
             for k in range(0, len(itemset)):#len(itemset)
                 item = itemset[k]
-                itemP =itemsetP[l]
+                itemP = itemsetP[l]
                 if item is itemP:
                     l = l + 1
                     if l == len(itemsetP):
@@ -93,9 +131,8 @@ def checkIfFrequent(ds, pattern, minSup):
                 count = count + 1
                 break
 
-    #print("counter ", count)
     if count >= minSup:
-        print("pattern", pattern)
+        print("pattern ", pattern, " support ", count)
         return True
 
     return False
@@ -103,9 +140,6 @@ def checkIfFrequent(ds, pattern, minSup):
 
 # not used
 def generateCandidates(ds, minSup, maxItemLength):
-    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]), (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
-          (2, [['a'], ['b'], ['f'], ['e']]), (3, [['b'], ['f', 'g']])]
-
     V = []
     F = []
     #list of all letters
@@ -124,7 +158,7 @@ def generateCandidates(ds, minSup, maxItemLength):
                     letters.append(letter)
 
     letters.sort()
-    print(letters)
+    #print(letters)
     #vertical database
     l = []
     l2 = []
@@ -157,7 +191,7 @@ def generateCandidates(ds, minSup, maxItemLength):
 
     print("V", V)
     freqs = []
-    #set of frequent items
+    #set of 1-frequent items
     for m in range(0, temp0):#tebelka dla kazdej litery   temp0
         count = 0
         for i in range(0, temp):#dla kazdego sid   temp
@@ -176,10 +210,6 @@ def generateCandidates(ds, minSup, maxItemLength):
             F.append(letters[m])
 
     print("F", F)
-    F.append(['a', 'b'])
-    F.append(['f', 'g'])
-    print("F", F)
-
     return V, F
 
 
@@ -210,6 +240,7 @@ def generateData(maxItems, maxSeqLength, maxItemLength, lastLetter):
         tuple = (i, seq)
         table.append(tuple)
 
+    print("generated data", table)
     return table
 
 
@@ -221,13 +252,12 @@ if __name__ == "__main__":
     #e = input("give minimum support: ")
 
     #dataset = generateData(4, 3, 2, 5)
-    #print("generated data", dataset)
+    #vds, f = generateCandidates(dataset, minSup, maxItemLength)
 
     minSup = 2
-    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]),
-          (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
+    ds = [(0, [['a', 'b', 'e'], ['c'], ['f', 'g'], ['g'], ['e']]),
+          (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f'], ['g']]),
           (2, [['a'], ['b'], ['f'], ['e']]),
           (3, [['b'], ['f', 'g']])]
-    f = [['a'], ['b'], ['c'], ['e'], ['f'], ['g'], ['a', 'b'], ['f', 'g']]
+    f = [['a'], ['b'], ['c'], ['e'], ['f'], ['g']]
     spam(ds, minSup, f)
-    #checkIfFrequent(ds, [['a'], ['c'], ['f']], 2)
