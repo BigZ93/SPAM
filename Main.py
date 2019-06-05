@@ -4,50 +4,64 @@ import pandas as pd
 import random
 import itertools
 
-def spam(data, minSup, maxItemLength):
-    patterns = []
-    V, F = generateCandidates(data, minSup, maxItemLength)
-    for i in range(0, len(F)):
-        print("item", F[i])
+def spam(data, minSup, frequentItems):
+    F = frequentItems
+    #V, F = generateCandidates(data, minSup, maxItemLength)
+    for i in range(0, len(F)):#len(F)
+        #print("item", F[i])
         s = F[i]
         pat = []
-        pat.append(s[0])
+        pat.append(s)
 
         i = []
         i.append(s[0])
 
-        search(pat, F, i, minSup)
+        checkIfFrequent(data, pat, minSup)
+        search(pat, F, i, minSup, data)
 
-    return patterns
 
-
-def search(pattern, S, I, minSup):
+def search(pattern, S, I, minSup, data):
     tempS = []
     tempI = []
-    for i in range(0, S):
+    p = []
+    elementsInTempSGreaterThani = []
+    elementsInTempIGreaterThani = []
+
+    for i in range(0, len(S)):#len(S)
         x = S[i]
-        p = pattern
+        #print("aaa", x)
+        p = []
+        for j in range(0, len(pattern)):
+            p.append(pattern[j])
+
         p.append(x)
-        # czy p jest frequent
-        if checkIfFrequent():
+        #print("bbb", p)
+        if checkIfFrequent(data, p, minSup) is True:
             tempS.append(x)
 
-    for i in range(0, len(tempS)):
-        search(p, tempS, elementsInTempSGreaterThani, minSup)
+    p2 = []
+    #print("ccc", tempS)
+    for i in range(0, len(tempS)):#len(tempS)
+        x2 = tempS[i]
+        #print("aaa", x2)
+        p2 = []
+        for j in range(0, len(pattern)):
+            p2.append(pattern[j])
 
-    for i in range(0, len(I)):
-        x2 = I[i]
-        p2 = pattern
-        l = len(p2)
-        p2[l-1].append(x2)
-        # czy p2 jest frequent
-        if checkIfFrequent():
-            tempI.append(x2)
+        p2.append(x2)
+        # print("bbb", p)
+        search(p2, tempS, elementsInTempSGreaterThani, minSup, data)
 
-    for i in range(0, tempI):
-       search(p2, tempS, elementsInTempIGreaterThani, minSup)
+    #for i in range(0, len(I)):
+    #    x2 = I[i]
+    #    p2 = pattern
+    #    l = len(p2)
+    #    p2[l-1].append(x2)
+    #    if checkIfFrequent(data, p, minSup):
+    #        tempI.append(x2)
 
-    return p
+    #for i in range(0, tempI):
+    #   search(p2, tempS, elementsInTempIGreaterThani, minSup, data)
 
 
 def checkIfFrequent(ds, pattern, minSup):
@@ -79,7 +93,7 @@ def checkIfFrequent(ds, pattern, minSup):
                 count = count + 1
                 break
 
-    print("counter ", count)
+    #print("counter ", count)
     if count >= minSup:
         print("pattern", pattern)
         return True
@@ -87,6 +101,7 @@ def checkIfFrequent(ds, pattern, minSup):
     return False
 
 
+# not used
 def generateCandidates(ds, minSup, maxItemLength):
     ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]), (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
           (2, [['a'], ['b'], ['f'], ['e']]), (3, [['b'], ['f', 'g']])]
@@ -161,13 +176,14 @@ def generateCandidates(ds, minSup, maxItemLength):
             F.append(letters[m])
 
     print("F", F)
-    F.append((['a', 'b'], 2))
-    F.append((['f', 'g'], 2))
+    F.append(['a', 'b'])
+    F.append(['f', 'g'])
     print("F", F)
 
     return V, F
 
 
+# not used
 def generateData(maxItems, maxSeqLength, maxItemLength, lastLetter):
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                 "u", "v", "w", "x", "y", "z"]
@@ -203,11 +219,15 @@ if __name__ == "__main__":
     #c = input("give maximum length of a itemset: ")
     #d = input("give maximum number of letter from the alphabet to choose from: ")
     #e = input("give minimum support: ")
+
     #dataset = generateData(4, 3, 2, 5)
     #print("generated data", dataset)
+
     minSup = 2
-    #p = spam(dataset, minSup, 2)
-    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]), (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
-          (2, [['a'], ['b'], ['f'], ['e']]), (3, [['b'], ['f', 'g']])]
-    p = [['a'], ['b']]
-    checkIfFrequent(ds, p, minSup)
+    ds = [(0, [['a', 'b'], ['c'], ['f', 'g'], ['g'], ['e']]),
+          (1, [['a', 'd'], ['c'], ['b'], ['a', 'b', 'e', 'f']]),
+          (2, [['a'], ['b'], ['f'], ['e']]),
+          (3, [['b'], ['f', 'g']])]
+    f = [['a'], ['b'], ['c'], ['e'], ['f'], ['g'], ['a', 'b'], ['f', 'g']]
+    spam(ds, minSup, f)
+    #checkIfFrequent(ds, [['a'], ['c'], ['f']], 2)
